@@ -73,3 +73,24 @@ trim_galore -q 25 --phred33 --fastqc --length 36 --stringency 3 --paired -o ../c
 
 –retain_unpaired
 在双端测序某一端处理后过短时，默认为舍弃该段的两端reads, 添加此参数则保留reads，长一点的那一端文件会自动保存为.unpaired_1.fq 或者 .unpaired_2.fq
+   
+   
+   
+   
+   ## trim.sh(建议的方法)
+   ```
+   vi trim.sh
+   ```
+   
+   写入以下内容
+   ```
+   dir=/BioII/lulab_b/qiaoruolin/FTC2/output/FTC/trimmed/
+cat config |while read id
+do
+      arr=${id}
+      fq1=${arr[0]}
+      fq2=${arr[1]}
+      nohup trim_galore -q 30 --phred33 --length 15 --trim-n -o $dir $fq1 $fq2 &
+done
+   ```
+   
