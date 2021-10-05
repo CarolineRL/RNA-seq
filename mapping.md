@@ -53,4 +53,11 @@ def main():
 
 if __name__ == "__main__":
     main() 
+    
+    
+--fastq output/FTC_new/trimmed/FTC-8_1.fastq.gz --bam-dir output/FTC_new/mapping/FTC-8_1/bam         
+--log-dir output/FTC_new/log/mapping/FTC-8_1 --threads 4         
+--unmapped-dir output/FTC_new/mapping/FTC-8_1/unmapped
+ 
+
 ```
