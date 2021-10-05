@@ -34,6 +34,7 @@ def main():
     parser.add_argument('--threads','-t',type=int,default=1,help="Number of threads for mapping")
     args = parser.parse_args()
     fastq = args.fastq
+    
     if not os.path.exists(args.bam_dir):
         os.makedirs(args.bam_dir)
     if not os.path.exists(args.unmapped_dir):
@@ -49,15 +50,14 @@ def main():
         assert align(fastq,index,bam,unmapped,log,threads=args.threads) == 0
         print("Done .")
         fastq = unmapped
-        
+
+
 
 if __name__ == "__main__":
     main() 
     
     
---fastq output/FTC_new/trimmed/FTC-8_1.fastq.gz --bam-dir output/FTC_new/mapping/FTC-8_1/bam         
---log-dir output/FTC_new/log/mapping/FTC-8_1 --threads 4         
---unmapped-dir output/FTC_new/mapping/FTC-8_1/unmapped
+
  
 
 ```
