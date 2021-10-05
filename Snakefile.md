@@ -78,4 +78,5 @@ rule dedup:
     shell:
         """
         umi_tools dedup -I {input.bam} -S {output.bam} > {log}
+        """
  ```
