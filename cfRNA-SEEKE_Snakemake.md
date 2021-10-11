@@ -1,4 +1,5 @@
-#cfRNA-SEEK
+# cfRNA-SEEK
+```
 rule map_spikein:
     input:
         reads='{output_dir}/unmapped/{sample_id}/clean.fa.gz',
@@ -266,3 +267,4 @@ rule map_other:
             --un-gz {output.unmapped} -x {params.index} - -S - \
         | samtools view -b -o {output.bam}
         '''
+```
