@@ -71,228 +71,254 @@ rule mapping:
 rule map_spikein:
     input:
         fastq = "output/{dataset}/trimmed/{sample_id}.fastq.gz"
-        index=genome_dir + '/index/bowtie2/spikein_small.1.bt2'
+        index=genome_dir + '/index/spikein_small.1.bt2'
     output:
-        unmapped='output/{dataset}/unmapped/{sample_id}/spikein.fa.gz',
-        bam='output/{dataset}/mapping/{sample_id}/spikein.bam'
+        unmapped='output/{dataset}/mapping/{sample_id}/unmapped/spikein.fa.gz',
+        bams=[ 'output/{dataset}/mapping/{sample_id}/bam/spikein.bam' + sequence + ".bam" for sequence in sequences ]
+    log:
+        "output/{dataset}/log/mapping/{sample_id}/spikein.txt"
     params:
-        index=genome_dir + '/index/bowtie2/spikein_small'
+        index=genome_dir + '/index/spikein_small'
     threads: 
-        config['threads_mapping']
+        4
     shell:
         '''pigz -d -c {input.reads} \
         | bowtie2 -f -p {threads} --norc --sensitive --no-unal \
-            --un-gz {output.unmapped} -x {params.index} - -S - \
+            --un-gz {output.unmapped} -x {params.index} - -S - > {log}\
         | samtools view -b -o {output.bam}
         '''
 
 rule map_univec:
     input:
-        reads='output/{dataset}/unmapped/{sample_id}/spikein.fa.gz',
-        index=genome_dir + '/rsem_index/bowtie2/univec.1.bt2'
+        reads='output/{dataset}/mapping/{sample_id}/unmapped/spikein.fa.gz',
+        index=genome_dir + '/index/univec.1.bt2'
     output:
-        unmapped='output/{dataset}/unmapped/{sample_id}/univec.fa.gz',
-        bam='output/{dataset}/mapping/{sample_id}/univec.bam'
+        unmapped='output/{dataset}/mapping/{sample_id}/unmapped/univec.fa.gz',
+        bams=[ 'output/{dataset}/mapping/{sample_id}/bam/univec.bam' + sequence + ".bam" for sequence in sequences ]
+    log:
+        "output/{dataset}/log/mapping/{sample_id}/univec.txt"
     params:
-        index=genome_dir + '/rsem_index/bowtie2/univec'
+        index=genome_dir + '/index/univec'
     threads: 
-        config['threads_mapping']
+        4
     shell:
         '''pigz -d -c {input.reads} \
         | bowtie2 -f -p {threads} --norc --sensitive --no-unal \
-            --un-gz {output.unmapped} -x {params.index} - -S - \
+            --un-gz {output.unmapped} -x {params.index} - -S - > {log}\
         | samtools view -b -o {output.bam}
         '''
 
 rule map_rRNA:
     input:
-        reads='{output_dir}/unmapped/{sample_id}/univec.fa.gz',
-        index=genome_dir + '/index/bowtie2/rRNA.1.bt2'
+        reads='output/{dataset}/mapping/{sample_id}/unmapped/univec.fa.gz',
+        index=genome_dir + '/index/rRNA.1.bt2'
     output:
-        unmapped='output/{dataset}/unmapped/{sample_id}/rRNA.fa.gz',
-        bam='output/{dataset}/mapping/{sample_id}/rRNA.bam'
+        unmapped='output/{dataset}/mapping/{sample_id}/unmapped/rRNA.fa.gz',
+        bam=[ 'output/{dataset}/mapping/{sample_id}/bam/rRNA.bam' + sequence + ".bam" for sequence in sequences ]
+    log:
+        "output/{dataset}/log/mapping/{sample_id}/rRNA.txt"
     params:
-        index=genome_dir + '/index/bowtie2/rRNA'
+        index=genome_dir + '/index/rRNA'
     threads: 
-        config['threads_mapping']
+        4
     shell:
         '''pigz -d -c {input.reads} \
         | bowtie2 -f -p {threads} --norc --sensitive --no-unal \
-            --un-gz {output.unmapped} -x {params.index} - -S - \
+            --un-gz {output.unmapped} -x {params.index} - -S - > {log}\
         | samtools view -b -o {output.bam}
         '''
 
 rule map_lncRNA:
     input:
-        reads='{output_dir}/unmapped/{sample_id}/rRNA.fa.gz',
-        index=genome_dir + '/rsem_index/bowtie2/lncRNA.1.bt2'
+        reads='output/{dataset}/mapping/{sample_id}/unmapped/rRNA.fa.gz',
+        index=genome_dir + '/index/bowtie2/lncRNA.1.bt2'
     output:
-        unmapped='{output_dir}/unmapped/{sample_id}/lncRNA.fa.gz',
-        bam='{output_dir}/tbam/{sample_id}/lncRNA.bam'
+        unmapped='output/{dataset}/mapping/{sample_id}/unmapped/lncRNA.fa.gz',
+        bam=[ 'output/{dataset}/mapping/{sample_id}/bam/lncRNA.bam' + sequence + ".bam" for sequence in sequences ]
+    log:
+        "output/{dataset}/log/mapping/{sample_id}/lncRNA.txt"
     params:
-        index=genome_dir + '/rsem_index/bowtie2/lncRNA'
+        index=genome_dir + '/index/lncRNA'
     threads: 
-        config['threads_mapping']
+        4
     shell:
         '''pigz -d -c {input.reads} \
         | bowtie2 -f -p {threads} --norc --sensitive --no-unal \
-            --un-gz {output.unmapped} -x {params.index} - -S - \
+            --un-gz {output.unmapped} -x {params.index} - -S - > {log}\
         | samtools view -b -o {output.bam}
         '''
 
 rule map_miRNA:
     input:
-        reads='{output_dir}/unmapped/{sample_id}/lncRNA.fa.gz',
-        index=genome_dir + '/index/bowtie2/miRNA.1.bt2'
+        reads='output/{dataset}/mapping/{sample_id}/unmapped/lncRNA.fa.gz',
+        index=genome_dir + '/index/miRNA.1.bt2'
     output:
-        unmapped='{output_dir}/unmapped/{sample_id}/miRNA.fa.gz',
-        bam='{output_dir}/tbam/{sample_id}/miRNA.bam'
+        unmapped='output/{dataset}/mapping/{sample_id}/unmapped/miRNA.fa.gz',
+        bam=[ 'output/{dataset}/mapping/{sample_id}/bam/miRNA.bam' + sequence + ".bam" for sequence in sequences ]
+    log:
+        "output/{dataset}/log/mapping/{sample_id}/miRNA.txt"
     params:
-        index=genome_dir + '/index/bowtie2/miRNA'
+        index=genome_dir + '/indexmiRNA'
     threads: 
-        config['threads_mapping']
+        4
     shell:
         '''pigz -d -c {input.reads} \
         | bowtie2 -f -p {threads} --norc --sensitive --no-unal \
-            --un-gz {output.unmapped} -x {params.index} - -S - \
+            --un-gz {output.unmapped} -x {params.index} - -S - > {log}\
         | samtools view -b -o {output.bam}
         '''
 
 rule map_mRNA:
     input:
-        reads='{output_dir}/unmapped/{sample_id}/miRNA.fa.gz',
-        index=genome_dir + '/rsem_index/bowtie2/mRNA.1.bt2'
+        reads='output/{dataset}/mapping/{sample_id}/unmapped/miRNA.fa.gz',
+        index=genome_dir + '/index//mRNA.1.bt2'
     output:
-        unmapped='{output_dir}/unmapped/{sample_id}/mRNA.fa.gz',
-        bam='{output_dir}/tbam/{sample_id}/mRNA.bam'
+        unmapped='output/{dataset}/mapping/{sample_id}/unmapped/mRNA.fa.gz',
+        bam=[ 'output/{dataset}/mapping/{sample_id}/bam/mRNA.bam' + sequence + ".bam" for sequence in sequences ]
+    log:
+        "output/{dataset}/log/mapping/{sample_id}/mRNA.txt"
     params:
-        index=genome_dir + '/rsem_index/bowtie2/mRNA'
+        index=genome_dir + '/index/mRNA'
     threads: 
-        config['threads_mapping']
+        4
     shell:
         '''pigz -d -c {input.reads} \
         | bowtie2 -f -p {threads} --norc --sensitive --no-unal \
-            --un-gz {output.unmapped} -x {params.index} - -S - \
+            --un-gz {output.unmapped} -x {params.index} - -S - > {log}\
         | samtools view -b -o {output.bam}
         '''
 
 rule map_piRNA:
     input:
-        reads='{output_dir}/unmapped/{sample_id}/mRNA.fa.gz',
-        index=genome_dir + '/rsem_index/bowtie2/piRNA.1.bt2'
+        reads='output/{dataset}/mapping/{sample_id}/unmapped/mRNA.fa.gz',
+        index=genome_dir + '/index/piRNA.1.bt2'
     output:
-        unmapped='{output_dir}/unmapped/{sample_id}/piRNA.fa.gz',
-        bam='{output_dir}/tbam/{sample_id}/piRNA.bam'
+        unmapped='output/{dataset}/mapping/{sample_id}/unmapped/piRNA.fa.gz',
+        bam=[ 'output/{dataset}/mapping/{sample_id}/bam/piRNA.bam' + sequence + ".bam" for sequence in sequences ]
+    log:
+        "output/{dataset}/log/mapping/{sample_id}/piRNA.txt"
     params:
-        index=genome_dir + '/rsem_index/bowtie2/piRNA'
+        index=genome_dir + '/index/piRNA'
     threads: 
-        config['threads_mapping']
+        4
     shell:
         '''pigz -d -c {input.reads} \
         | bowtie2 -f -p {threads} --norc --sensitive --no-unal \
-            --un-gz {output.unmapped} -x {params.index} - -S - \
+            --un-gz {output.unmapped} -x {params.index} - -S - > {log}\
         | samtools view -b -o {output.bam}
         '''
 
 rule map_snoRNA:
     input:
-        reads='{output_dir}/unmapped/{sample_id}/piRNA.fa.gz',
-        index=genome_dir + '/rsem_index/bowtie2/snoRNA.1.bt2'
+        reads='output/{dataset}/mapping/{sample_id}/unmapped/piRNA.fa.gz',
+        index=genome_dir + '/index/snoRNA.1.bt2'
     output:
-        unmapped='{output_dir}/unmapped/{sample_id}/snoRNA.fa.gz',
-        bam='{output_dir}/tbam/{sample_id}/snoRNA.bam'
+        unmapped='output/{dataset}/mapping/{sample_id}/unmapped/snoRNA.fa.gz',
+        bam=[ 'output/{dataset}/mapping/{sample_id}/bam/snoRNA.bam' + sequence + ".bam" for sequence in sequences ]
+    log:
+        "output/{dataset}/log/mapping/{sample_id}/snoRNA.txt"
     params:
-        index=genome_dir + '/rsem_index/bowtie2/snoRNA'
+        index=genome_dir + '/index/snoRNA'
     threads: 
-        config['threads_mapping']
+        4
     shell:
         '''pigz -d -c {input.reads} \
         | bowtie2 -f -p {threads} --norc --sensitive --no-unal \
-            --un-gz {output.unmapped} -x {params.index} - -S - \
+            --un-gz {output.unmapped} -x {params.index} - -S - > {log}\
         | samtools view -b -o {output.bam}
         '''
 
 rule map_snRNA:
     input:
-        reads='{output_dir}/unmapped/{sample_id}/snoRNA.fa.gz',
-        index=genome_dir + '/rsem_index/bowtie2/snRNA.1.bt2'
+        reads='output/{dataset}/mapping/{sample_id}/unmapped/snoRNA.fa.gz',
+        index=genome_dir + '/index/snRNA.1.bt2'
     output:
-        unmapped='{output_dir}/unmapped/{sample_id}/snRNA.fa.gz',
-        bam='{output_dir}/tbam/{sample_id}/snRNA.bam'
+        unmapped='output/{dataset}/mapping/{sample_id}/unmapped/snRNA.fa.gz',
+        bam=[ 'output/{dataset}/mapping/{sample_id}/bam/snRNA.bam' + sequence + ".bam" for sequence in sequences ]
+    log:
+        "output/{dataset}/log/mapping/{sample_id}/snRNA.txt"
     params:
-        index=genome_dir + '/rsem_index/bowtie2/snRNA'
+        index=genome_dir + '/index/snRNA'
     threads: 
-        config['threads_mapping']
+        4
     shell:
         '''pigz -d -c {input.reads} \
         | bowtie2 -f -p {threads} --norc --sensitive --no-unal \
-            --un-gz {output.unmapped} -x {params.index} - -S - \
+            --un-gz {output.unmapped} -x {params.index} - -S - > {log}\
         | samtools view -b -o {output.bam}
         '''
 
 rule map_srpRNA:
     input:
-        reads='{output_dir}/unmapped/{sample_id}/snRNA.fa.gz',
-        index=genome_dir + '/rsem_index/bowtie2/srpRNA.1.bt2'
+        reads='output/{dataset}/mapping/{sample_id}/unmapped/snRNA.fa.gz',
+        index=genome_dir + '/index/srpRNA.1.bt2'
     output:
-        unmapped='{output_dir}/unmapped/{sample_id}/srpRNA.fa.gz',
-        bam='{output_dir}/tbam/{sample_id}/srpRNA.bam'
+        unmapped='output/{dataset}/mapping/{sample_id}/unmapped/srpRNA.fa.gz',
+        bam=['output/{dataset}/mapping/{sample_id}/bam/srpRNA.bam' + sequence + ".bam" for sequence in sequences ]
+    log:
+        "output/{dataset}/log/mapping/{sample_id}/srpRNA.txt"
     params:
-        index=genome_dir + '/rsem_index/bowtie2/srpRNA'
+        index=genome_dir + '/index/srpRNA'
     threads: 
-        config['threads_mapping']
+        4
     shell:
         '''pigz -d -c {input.reads} \
         | bowtie2 -f -p {threads} --norc --sensitive --no-unal \
-            --un-gz {output.unmapped} -x {params.index} - -S - \
+            --un-gz {output.unmapped} -x {params.index} - -S - > {log}\
         | samtools view -b -o {output.bam}
         '''
 
 rule map_tRNA:
     input:
-        reads='{output_dir}/unmapped/{sample_id}/srpRNA.fa.gz',
-        index=genome_dir + '/rsem_index/bowtie2/tRNA.1.bt2'
+        reads='output/{dataset}/mapping/{sample_id}/unmapped/srpRNA.fa.gz',
+        index=genome_dir + '/index/tRNA.1.bt2'
     output:
-        unmapped='{output_dir}/unmapped/{sample_id}/tRNA.fa.gz',
-        bam='{output_dir}/tbam/{sample_id}/tRNA.bam'
+        unmapped='output/{dataset}/mapping/{sample_id}/unmapped/tRNA.fa.gz',
+        bam=[ 'output/{dataset}/mapping/{sample_id}/bam/tRNA.bam' + sequence + ".bam" for sequence in sequences ]
+    log:
+        "output/{dataset}/log/mapping/{sample_id}/tRNA.txt"
     params:
-        index=genome_dir + '/rsem_index/bowtie2/tRNA'
+        index=genome_dir + '/index/tRNA'
     threads: 
-        config['threads_mapping']
+        4
     shell:
         '''pigz -d -c {input.reads} \
         | bowtie2 -f -p {threads} --norc --sensitive --no-unal \
-            --un-gz {output.unmapped} -x {params.index} - -S - \
+            --un-gz {output.unmapped} -x {params.index} - -S - > {log}\
         | samtools view -b -o {output.bam}
         '''
 
 rule map_tucpRNA:
     input:
-        reads='{output_dir}/unmapped/{sample_id}/tRNA.fa.gz',
-        index=genome_dir + '/rsem_index/bowtie2/tucpRNA.1.bt2'
+        reads='output/{dataset}/mapping/{sample_id}/unmapped/tRNA.fa.gz',
+        index=genome_dir + '/index/tucpRNA.1.bt2'
     output:
-        unmapped='{output_dir}/unmapped/{sample_id}/tucpRNA.fa.gz',
-        bam='{output_dir}/tbam/{sample_id}/tucpRNA.bam'
+        unmapped='output/{dataset}/mapping/{sample_id}/unmapped/tucpRNA.fa.gz',
+        bam=[ 'output/{dataset}/mapping/{sample_id}/bam/tucpRNA.bam' + sequence + ".bam" for sequence in sequences ]
+    log:
+        "output/{dataset}/log/mapping/{sample_id}/tucpRNA.txt"
     params:
-        index=genome_dir + '/rsem_index/bowtie2/tucpRNA'
+        index=genome_dir + '/index/tucpRNA'
     threads: 
-        config['threads_mapping']
+        4
     shell:
         '''pigz -d -c {input.reads} \
         | bowtie2 -f -p {threads} --norc --sensitive --no-unal \
-            --un-gz {output.unmapped} -x {params.index} - -S - \
+            --un-gz {output.unmapped} -x {params.index} - -S - > {log}\
         | samtools view -b -o {output.bam}
         '''
 
 rule map_Y_RNA:
     input:
-        reads='{output_dir}/unmapped/{sample_id}/tucpRNA.fa.gz',
-        index=genome_dir + '/rsem_index/bowtie2/Y_RNA.1.bt2'
+        reads='output/{dataset}/mapping/{sample_id}/unmapped/tucpRNA.fa.gz',
+        index=genome_dir + '/index/Y_RNA.1.bt2'
     output:
-        unmapped='{output_dir}/unmapped/{sample_id}/Y_RNA.fa.gz',
-        bam='{output_dir}/tbam/{sample_id}/Y_RNA.bam'
+        unmapped='output/{dataset}/mapping/{sample_id}/unmapped/Y_RNA.fa.gz',
+        bam=[ 'output/{dataset}/mapping/{sample_id}/bam/Y_RNA.bam' + sequence + ".bam" for sequence in sequences ]
+    log:
+        "output/{dataset}/log/mapping/{sample_id}/Y_RNA.txt"
     params:
-        index=genome_dir + '/rsem_index/bowtie2/Y_RNA'
+        index=genome_dir + '/index/Y_RNA'
     threads: 
         config['threads_mapping']
     shell:
@@ -304,35 +330,39 @@ rule map_Y_RNA:
 
 rule map_circRNA:
     input:
-        reads='{output_dir}/unmapped/{sample_id}/Y_RNA.fa.gz',
-        index=genome_dir + '/index/bowtie2/circRNA.1.bt2'
+        reads='output/{dataset}/mapping/{sample_id}/unmapped/Y_RNA.fa.gz',
+        index=genome_dir + '/index/circRNA.1.bt2'
     output:
-        unmapped='{output_dir}/unmapped/{sample_id}/circRNA.fa.gz',
-        bam='{output_dir}/tbam/{sample_id}/circRNA.bam'
+        unmapped='output/{dataset}/mapping/{sample_id}/unmapped/circRNA.fa.gz',
+        bam=[ 'output/{dataset}/mapping/{sample_id}/bam/circRNA.bam' + sequence + ".bam" for sequence in sequences ]
+    log:
+        "output/{dataset}/log/mapping/{sample_id}/circ_RNA.txt"
     params:
-        index=genome_dir + '/index/bowtie2/circRNA'
+        index=genome_dir + '/index/circRNA'
     threads: 
-        config['threads_mapping']
+        4
     shell:
         '''pigz -d -c {input.reads} \
         | bowtie2 -f -p {threads} --norc --sensitive --no-unal \
-            --un-gz {output.unmapped} -x {params.index} - -S - \
+            --un-gz {output.unmapped} -x {params.index} - -S - > {log}\
         | samtools view -b -o {output.bam}
         '''
 
 rule map_other:
     input:
-        reads='{output_dir}/unmapped/{sample_id}/circRNA.fa.gz',
-        index=genome_dir + '/genome_index/bowtie2/genome.1.bt2'
+        reads='output/{dataset}/mapping/{sample_id}/unmapped/circRNA.fa.gz',
+        index=genome_dir + '/index/genome.1.bt2'
     output:
-        unmapped='{output_dir}/unmapped/{sample_id}/other.fa.gz',
-        bam='{output_dir}/gbam/{sample_id}/other.bam'
+        unmapped='output/{dataset}/mapping/{sample_id}/unmapped/other.fa.gz',
+        bam=[ 'output/{dataset}/mapping/{sample_id}/bam/other.bam' + sequence + ".bam" for sequence in sequences ]
+    log:
+        "output/{dataset}/log/mapping/{sample_id}/other.txt"
     params:
-        index=genome_dir + '/genome_index/bowtie2/genome'
+        index=genome_dir + '/index/genome'
     shell:
         '''pigz -d -c {input.reads} \
         | bowtie2 -f -p {threads} --sensitive --no-unal \
-            --un-gz {output.unmapped} -x {params.index} - -S - \
+            --un-gz {output.unmapped} -x {params.index} - -S - > {log}\
         | samtools view -b -o {output.bam}
         '''
 
