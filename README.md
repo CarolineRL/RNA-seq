@@ -1,4 +1,5 @@
 # RNA-seq
+```
 #dataset = "GSE131483"
 dataset = "FTC_new"
 sample_ids = open ("sample_id/{}.txt".format(dataset)).read().strip().split("\n")
@@ -99,3 +100,4 @@ rule dedup:
         """
         umi_tools dedup -I {input.bam} -S {output.bam} > {log}
         """
+```
